@@ -267,3 +267,25 @@ class MeshRepeatedCylindersTerrainCfg(MeshRepeatedObjectsTerrainCfg):
     """The box curriculum parameters at the start of the curriculum."""
     object_params_end: ObjectCfg = MISSING
     """The box curriculum parameters at the end of the curriculum."""
+
+
+@configclass
+class MeshLadderTerrainCfg(SubTerrainBaseCfg):
+    """Configuration for a terrain with a floating ring around the center."""
+
+    function = mesh_terrains.ladder_terrain
+    
+    ladder_length: float = MISSING
+    """The length of the ladder (in m)."""
+    
+    ladder_angle: float = MISSING
+    """The angle of the ladder (in degrees)."""
+    
+    ladder_gap: float = MISSING
+    """The gap between the ladder steps (in m)."""
+    
+    ladder_radius: float = MISSING
+    """The radius of the ladder (in m)."""
+
+    platform_width: float = 1.0
+    """The width of the targeted square platform. Defaults to 1.0."""

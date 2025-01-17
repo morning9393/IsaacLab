@@ -280,6 +280,14 @@ class G1DexClimbEnvCfg(LocomotionClimbEnvCfg):
     def __post_init__(self):
         # post init of parent
         super().__post_init__()
+        self.sim.physx.gpu_max_rigid_patch_count = 5 * 2**18 # default is 5 * 2**15
+        
+        # # change terrain to flat
+        # self.scene.terrain.terrain_type = "plane"
+        # self.scene.terrain.terrain_generator = None
+        # # no terrain curriculum
+        # self.curriculum.terrain_levels = None
+        
         # Scene
         self.scene.robot = G1_DEX_CFG.replace(prim_path="{ENV_REGEX_NS}/Robot")
         self.scene.height_scanner.prim_path = "{ENV_REGEX_NS}/Robot/torso_link"

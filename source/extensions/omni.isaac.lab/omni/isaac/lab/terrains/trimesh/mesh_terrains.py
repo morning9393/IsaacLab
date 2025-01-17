@@ -14,7 +14,7 @@ import trimesh
 from typing import TYPE_CHECKING
 
 from .utils import *  # noqa: F401, F403
-from .utils import make_border, make_plane
+from .utils import make_border, make_plane, make_cylinder
 
 if TYPE_CHECKING:
     from . import mesh_terrains_cfg
@@ -848,5 +848,47 @@ def repeated_objects_terrain(
     pos = (0.5 * cfg.size[0], 0.5 * cfg.size[1], 0.25 * height)
     platform = trimesh.creation.box(dim, trimesh.transformations.translation_matrix(pos))
     meshes_list.append(platform)
+
+    return meshes_list, origin
+
+
+def ladder_terrain(
+    difficulty: float, cfg: mesh_terrains_cfg.MeshLadderTerrainCfg
+) -> tuple[list[trimesh.Trimesh], np.ndarray]:
+    """Generate a terrain with a ladder.
+
+    The terrain has a ground with a ladder in the middle. The ladder extends from the center from
+    :obj:`platform_width` to :obj:`platform_width` + :obj:`ring_width` in the x and y directions.
+
+    Args:
+        difficulty: The difficulty of the terrain. This is a value between 0 and 1.
+        cfg: The configuration for the terrain.
+
+    Returns:
+        A tuple containing the tri-mesh of the terrain and the origin of the terrain (in m).
+    """
+    ladder_length = cfg.ladder_length
+    ladder_angle = cfg.ladder_angle
+    ladder_gap = cfg.ladder_gap
+    
+    meshes_list = list()
+    
+    platform_height = ladder_length * np.sin(ladder_angle)
+    platform_center = (0.5 * cfg.size[0], 0.5 * cfg.size[1], 0.5 * platform_height)
+    platform_size = (cfg.platform_width, cfg.platform_width, platform_height)
+    platform = trimesh.creation.box(platform_size, trimesh.transformations.translation_matrix(platform_center))
+    
+    meshes_list.append(platform)
+    
+    
+
+    # Generate the floating ring
+    # ring_center = (0.5 * cfg.size[0], 0.5 * cfg.size[1], ring_height + 0.5 * cfg.ring_thickness)
+    # ring_outer_size = (cfg.platform_width + 2 * ring_width, cfg.platform_width + 2 * ring_width)
+    # ring_inner_size = (cfg.platform_width, cfg.platform_width)
+    # meshes_list += make_border(ring_outer_size, ring_inner_size, cfg.ring_thickness, ring_center)
+
+    # specify the origin of the terrain
+    origin = np.asarray([0.5 * cfg.size[0], 0.5 * cfg.size[1], 0.0])
 
     return meshes_list, origin

@@ -28,13 +28,35 @@ import omni.isaac.lab_tasks.manager_based.locomotion.climbing.mdp as mdp
 ##
 # Pre-defined configs
 ##
-from omni.isaac.lab.terrains.config.rough import ROUGH_TERRAINS_CFG  # isort: skip
+# from omni.isaac.lab.terrains.config.rough import ROUGH_TERRAINS_CFG  # isort: skip
+from omni.isaac.lab.terrains.terrain_generator_cfg import TerrainGeneratorCfg
+import omni.isaac.lab.terrains as terrain_gen
 
+
+CLIMB_TERRAINS_CFG = TerrainGeneratorCfg(
+    size=(10.0, 10.0),
+    border_width=5.0,
+    border_height=1.0,
+    num_rows=1,
+    num_cols=1,
+    horizontal_scale=0.1,
+    vertical_scale=0.005,
+    slope_threshold=1.0,
+    use_cache=False,
+    sub_terrains={
+        "ladder": terrain_gen.MeshLadderTerrainCfg(
+            ladder_length=2.0,
+            ladder_angle=15.0,
+            ladder_gap=0.3,
+            ladder_radius=0.025,
+            platform_width=2.0,
+        )
+    },
+)
 
 ##
 # Scene definition
 ##
-
 
 @configclass
 class MySceneCfg(InteractiveSceneCfg):
@@ -44,7 +66,7 @@ class MySceneCfg(InteractiveSceneCfg):
     terrain = TerrainImporterCfg(
         prim_path="/World/ground",
         terrain_type="generator",
-        terrain_generator=ROUGH_TERRAINS_CFG,
+        terrain_generator=CLIMB_TERRAINS_CFG,
         max_init_terrain_level=5,
         collision_group=-1,
         physics_material=sim_utils.RigidBodyMaterialCfg(
