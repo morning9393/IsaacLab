@@ -28,6 +28,7 @@ from omni.isaac.lab_tasks.manager_based.locomotion.climbing.config.g1_dex3_1.g1_
 ##
 # from omni.isaac.lab_assets import G1_MINIMAL_CFG  # isort: skip
 from omni.isaac.lab.utils.assets import ISAACLAB_NUCLEUS_DIR
+# http://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/4.2/Isaac/IsaacLab
 
 
 # @configclass

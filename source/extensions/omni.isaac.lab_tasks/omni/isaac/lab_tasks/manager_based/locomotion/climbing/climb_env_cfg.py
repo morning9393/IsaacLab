@@ -34,7 +34,7 @@ import omni.isaac.lab.terrains as terrain_gen
 
 
 CLIMB_TERRAINS_CFG = TerrainGeneratorCfg(
-    size=(10.0, 10.0),
+    size=(8.0, 8.0),
     border_width=5.0,
     border_height=1.0,
     num_rows=1,
@@ -45,8 +45,8 @@ CLIMB_TERRAINS_CFG = TerrainGeneratorCfg(
     use_cache=False,
     sub_terrains={
         "ladder": terrain_gen.MeshLadderTerrainCfg(
-            ladder_length=2.0,
-            ladder_angle=15.0,
+            ladder_length=3.0,
+            ladder_angle=15.0, # in degrees, from 0 to 90
             ladder_gap=0.3,
             ladder_radius=0.025,
             platform_width=2.0,

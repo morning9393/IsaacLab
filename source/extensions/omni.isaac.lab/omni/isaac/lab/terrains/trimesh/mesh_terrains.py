@@ -870,18 +870,26 @@ def ladder_terrain(
     ladder_length = cfg.ladder_length
     ladder_angle = cfg.ladder_angle
     ladder_gap = cfg.ladder_gap
+    distance2ladder = 1.0
+    
     
     meshes_list = list()
     
-    platform_height = ladder_length * np.sin(ladder_angle)
-    platform_center = (0.5 * cfg.size[0], 0.5 * cfg.size[1], 0.5 * platform_height)
+    ground_plane = make_plane(cfg.size, height=0.0, center_zero=False)
+    meshes_list.append(ground_plane)
+    
+    platform_height = ladder_length * np.sin(np.radians(ladder_angle))
+    platform_shift = ladder_length * np.cos(np.radians(ladder_angle)) + 0.5 * cfg.platform_width + distance2ladder
+    platform_center = (0.5 * cfg.size[0] + platform_shift, 0.5 * cfg.size[1], 0.5 * platform_height)
     platform_size = (cfg.platform_width, cfg.platform_width, platform_height)
     platform = trimesh.creation.box(platform_size, trimesh.transformations.translation_matrix(platform_center))
-    
     meshes_list.append(platform)
     
+    ladder_shift =  distance2ladder + 0.5 * ladder_length * np.cos(np.radians(ladder_angle))
+    ladder_center = (0.5 * cfg.size[0] + ladder_shift, 0.5 * cfg.size[1], 0.5 * platform_height)
+    ladder = make_ladder(cfg.ladder_radius, ladder_length, ladder_center, ladder_angle, ladder_gap)
+    meshes_list += ladder
     
-
     # Generate the floating ring
     # ring_center = (0.5 * cfg.size[0], 0.5 * cfg.size[1], ring_height + 0.5 * cfg.ring_thickness)
     # ring_outer_size = (cfg.platform_width + 2 * ring_width, cfg.platform_width + 2 * ring_width)
@@ -892,3 +900,43 @@ def ladder_terrain(
     origin = np.asarray([0.5 * cfg.size[0], 0.5 * cfg.size[1], 0.0])
 
     return meshes_list, origin
+
+def make_ladder(
+    radius: float, length: float, center: tuple[float, float, float], angle: float, gap: float
+) -> list[trimesh.Trimesh]:
+    
+    supp_border_length = 0.2
+    
+    rotation_matrix = tf.Rotation.from_euler("yzx", [90-angle, 0.0, 0.0], degrees=True).as_matrix()
+    
+    ladder_components = []
+    
+    left_supp_transform = np.eye(4)
+    left_supp_transform[0:3, -1] = np.asarray((center[0], center[1] + 0.25, center[2]))
+    left_supp_transform[0:3, 0:3] = rotation_matrix
+    left_supp = trimesh.creation.cylinder(radius, length + 2 * supp_border_length, transform=left_supp_transform)
+    ladder_components.append(left_supp)
+    
+    right_supp_transform = np.eye(4)
+    right_supp_transform[0:3, -1] = np.asarray((center[0], center[1] - 0.25, center[2]))
+    right_supp_transform[0:3, 0:3] = rotation_matrix
+    right_supp = trimesh.creation.cylinder(radius, length + 2 * supp_border_length, transform=right_supp_transform)
+    ladder_components.append(right_supp)
+    
+    num_step = int(length//gap)
+    step_start_x = center[0] - 0.5 * length * np.cos(np.radians(angle))
+    step_start_z = 0.0
+    step_gap_x = gap * np.cos(np.radians(angle))
+    step_gap_z = gap * np.sin(np.radians(angle))
+    step_rotation_matrix = tf.Rotation.from_euler("xyz", [90, 0.0, 0.0], degrees=True).as_matrix()
+
+    for i in range(1, num_step):
+        step_center = (step_start_x + i * step_gap_x, center[1], step_start_z + i * step_gap_z)
+        step_transform = np.eye(4)
+        step_transform[0:3, -1] = np.asarray(step_center)
+        step_transform[0:3, 0:3] = step_rotation_matrix
+        step = trimesh.creation.cylinder(radius, 0.5, transform=step_transform)
+        ladder_components.append(step)
+        
+    
+    return ladder_components
