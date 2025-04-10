@@ -133,7 +133,7 @@ G1_DEX_CFG = ArticulationCfg(
         ),
     ),
     init_state=ArticulationCfg.InitialStateCfg(
-        pos=(0.0, 0.0, 0.74),  # initial position, set according to needs
+        pos=(0.0, 0.0, 0.8),  # initial position, set according to needs
         joint_pos={
             # leg joints
             "left_hip_pitch_joint": -0.20,

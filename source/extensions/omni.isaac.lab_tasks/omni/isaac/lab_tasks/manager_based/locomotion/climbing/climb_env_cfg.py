@@ -46,7 +46,7 @@ CLIMB_TERRAINS_CFG = TerrainGeneratorCfg(
     sub_terrains={
         "ladder": terrain_gen.MeshLadderTerrainCfg(
             ladder_length=3.0,
-            ladder_angle=15.0, # in degrees, from 0 to 90
+            ladder_angle=85.0, # in degrees, from 0 to 90
             ladder_gap=0.3,
             ladder_radius=0.025,
             platform_width=2.0,
