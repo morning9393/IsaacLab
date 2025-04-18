@@ -14,6 +14,7 @@ from isaaclab.assets import Articulation
 from isaaclab.envs import DirectRLEnv
 from isaaclab.sim.spawners.from_files import GroundPlaneCfg, spawn_ground_plane
 from isaaclab.utils.math import quat_rotate
+from isaaclab.terrains.trimesh.utils import make_plane
 
 from .humanoid_amp_env_cfg_g1_v2 import HumanoidAmpEnvCfg
 from .motions import MotionLoader
@@ -30,6 +31,7 @@ class HumanoidAmpEnv(DirectRLEnv):
         dof_upper_limits = self.robot.data.soft_joint_pos_limits[0, :, 1]
         self.action_offset = 0.5 * (dof_upper_limits + dof_lower_limits)
         self.action_scale = dof_upper_limits - dof_lower_limits
+        
         # import ipdb; ipdb.set_trace()
         # load motion
         self._motion_loader = MotionLoader(motion_file=self.cfg.motion_file, device=self.device)
@@ -67,7 +69,7 @@ class HumanoidAmpEnv(DirectRLEnv):
                     restitution=0.0,
                 ),
             ),
-        )
+        )        
         # clone and replicate
         self.scene.clone_environments(copy_from_source=False)
         # add articulation to scene
@@ -82,7 +84,9 @@ class HumanoidAmpEnv(DirectRLEnv):
     def _apply_action(self):
         # import ipdb; ipdb.set_trace()
         # target = self.action_offset + self.action_scale * self.actions
-        target = self.action_offset[self.motion_dof_select_robot_indexes] + self.action_scale[self.motion_dof_select_robot_indexes] * self.actions
+        
+        # target = self.action_offset[self.motion_dof_select_robot_indexes] + self.action_scale[self.motion_dof_select_robot_indexes] * self.actions
+        target = self.actions
         # self.robot.set_joint_position_target(target)
         # import ipdb; ipdb.set_trace()
         self.robot.set_joint_position_target(target, joint_ids=self.motion_dof_select_robot_indexes)
@@ -104,6 +108,7 @@ class HumanoidAmpEnv(DirectRLEnv):
         for i in reversed(range(self.cfg.num_amp_observations - 1)):
             self.amp_observation_buffer[:, i + 1] = self.amp_observation_buffer[:, i]
         # build AMP observation
+        
         self.amp_observation_buffer[:, 0] = obs.clone()
         self.extras = {"amp_obs": self.amp_observation_buffer.view(-1, self.amp_observation_size)}
 

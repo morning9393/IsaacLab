@@ -73,11 +73,9 @@ class HumanoidAmpEnvCfg(DirectRLEnvCfg):
     #         ),
     #     },
     # )
-    robot: ArticulationCfg = G1_CFG.replace(prim_path="/World/envs/env_.*/Robot")
-    print("robot prim_path: ", robot.prim_path)
-    exit()
+    # robot: ArticulationCfg = G1_CFG.replace(prim_path="/World/envs/env_.*/Robot")
     # robot: ArticulationCfg = G1_CFG
-    # robot: ArticulationCfg = G1_MINIMAL_CFG.replace(prim_path="{ENV_REGEX_NS}/Robot")
+    robot: ArticulationCfg = G1_MINIMAL_CFG.replace(prim_path="/World/envs/env_.*/Robot")
 
 
 @configclass
