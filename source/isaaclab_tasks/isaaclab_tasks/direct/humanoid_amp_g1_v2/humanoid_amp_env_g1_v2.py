@@ -37,10 +37,10 @@ class HumanoidAmpEnv(DirectRLEnv):
         self._motion_loader = MotionLoader(motion_file=self.cfg.motion_file, device=self.device)
 
         # DOF and key body indexes
-        # self.robot.data.joint_names: ['abdomen_x', 'abdomen_y', 'abdomen_z', 'neck_x', 'neck_y', 'neck_z', 'right_shoulder_x', 'right_shoulder_y', 'right_shoulder_z', 'left_shoulder_x', 'left_shoulder_y', 'left_shoulder_z', 'right_hip_x', 'right_hip_y', 'right_hip_z', 'left_hip_x', 'left_hip_y', 'left_hip_z', 'right_elbow', 'left_elbow', 'right_knee', 'left_knee', 'right_ankle_x', 'right_ankle_y', 'right_ankle_z', 'left_ankle_x', 'left_ankle_y', 'left_ankle_z']
         motion_key_body_names = ["right_hand", "left_hand", "right_foot", "left_foot"]
         key_body_names = ["right_palm_link", "left_palm_link", "right_ankle_roll_link", "left_ankle_roll_link"]
         # import pdb; pdb.set_trace()
+        
         self.ref_body_index = self.robot.data.body_names.index(self.cfg.reference_body)
         self.key_body_indexes = [self.robot.data.body_names.index(name) for name in key_body_names]
         # import ipdb; ipdb.set_trace()
@@ -89,6 +89,10 @@ class HumanoidAmpEnv(DirectRLEnv):
         target = self.actions
         # self.robot.set_joint_position_target(target)
         # import ipdb; ipdb.set_trace()
+        
+        # print("target", target)
+        # print("motion_dof_select_robot_indexes", self.motion_dof_select_robot_indexes)
+        # exit()
         self.robot.set_joint_position_target(target, joint_ids=self.motion_dof_select_robot_indexes)
 
     def _get_observations(self) -> dict:
@@ -214,11 +218,11 @@ class HumanoidAmpEnv(DirectRLEnv):
         amp_observation = compute_obs(
             dof_positions[:, self.motion_dof_indexes], # 28 --> 21
             dof_velocities[:, self.motion_dof_indexes], # 28 ---> 21
-            body_positions[:, self.motion_ref_body_index], # 1
-            body_rotations[:, self.motion_ref_body_index], # 1
-            body_linear_velocities[:, self.motion_ref_body_index], # 1
-            body_angular_velocities[:, self.motion_ref_body_index],
-            body_positions[:, self.motion_key_body_indexes], # 4
+            body_positions[:, self.motion_ref_body_index], # 3
+            body_rotations[:, self.motion_ref_body_index], # 4
+            body_linear_velocities[:, self.motion_ref_body_index], # 3
+            body_angular_velocities[:, self.motion_ref_body_index], # 3
+            body_positions[:, self.motion_key_body_indexes], # (4,3)
         )
         # import ipdb; ipdb.set_trace()
         return amp_observation.view(-1, self.amp_observation_size)
@@ -245,6 +249,15 @@ def compute_obs(
     root_angular_velocities: torch.Tensor,
     key_body_positions: torch.Tensor,
 ) -> torch.Tensor:
+    
+    # print("dof_positions: ", dof_positions.shape)
+    # print("dof_velocities: ", dof_velocities.shape)
+    # print("root_positions: ", root_positions.shape)
+    # print("root_rotations: ", root_rotations.shape)
+    # print("root_linear_velocities: ", root_linear_velocities.shape)
+    # print("root_angular_velocities: ", root_angular_velocities.shape)
+    # print("key_body_positions: ", key_body_positions.shape)
+    
     obs = torch.cat(
         (
             dof_positions,

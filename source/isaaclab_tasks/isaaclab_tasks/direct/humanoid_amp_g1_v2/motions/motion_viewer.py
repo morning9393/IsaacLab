@@ -100,6 +100,9 @@ class MotionViewer:
             frames=self._num_frames,
             interval=1000 * self._motion_loader.dt,
         )
+        
+        # self._drawing_callback(1)
+        
         plt.show()
 
 

@@ -46,15 +46,37 @@ class MotionLoader:
         self.num_frames = self.dof_positions.shape[0]
         self.duration = self.dt * (self.num_frames - 1)
 
+        # self.g1_mapping = {"abdomen_x": "torso_joint", 
+        #                    "right_shoulder_x": "right_shoulder_roll_joint", 
+        #                    "right_shoulder_y": "right_shoulder_pitch_joint", 
+        #                    "right_shoulder_z": "right_shoulder_yaw_joint", 
+        #                    "right_elbow": "right_elbow_roll_joint", 
+        #                    "left_shoulder_x": "left_shoulder_roll_joint", 
+        #                    "left_shoulder_y": "left_shoulder_pitch_joint", 
+        #                    "left_shoulder_z": "left_shoulder_yaw_joint", 
+        #                    "left_elbow": "left_elbow_roll_joint", 
+        #                    "right_hip_x": "right_hip_roll_joint", 
+        #                    "right_hip_y": "right_hip_pitch_joint", 
+        #                    "right_hip_z": "right_hip_yaw_joint", 
+        #                    "right_knee": "right_knee_joint", 
+        #                    "right_ankle_x": "right_ankle_roll_joint", 
+        #                    "right_ankle_y": "right_ankle_pitch_joint", 
+        #                    "left_hip_x": "left_hip_roll_joint", 
+        #                    "left_hip_y": "left_hip_pitch_joint", 
+        #                    "left_hip_z": "left_hip_yaw_joint", 
+        #                    "left_knee": "left_knee_joint", 
+        #                    "left_ankle_x": "left_ankle_roll_joint", 
+        #                    "left_ankle_y": "left_ankle_pitch_joint"}
+        
         self.g1_mapping = {"abdomen_x": "torso_joint", 
                            "right_shoulder_x": "right_shoulder_roll_joint", 
                            "right_shoulder_y": "right_shoulder_pitch_joint", 
                            "right_shoulder_z": "right_shoulder_yaw_joint", 
-                           "right_elbow": "right_elbow_roll_joint", 
+                           "right_elbow": "right_elbow_pitch_joint",  # bugfix
                            "left_shoulder_x": "left_shoulder_roll_joint", 
                            "left_shoulder_y": "left_shoulder_pitch_joint", 
                            "left_shoulder_z": "left_shoulder_yaw_joint", 
-                           "left_elbow": "left_elbow_roll_joint", 
+                           "left_elbow": "left_elbow_pitch_joint",  # bugfix
                            "right_hip_x": "right_hip_roll_joint", 
                            "right_hip_y": "right_hip_pitch_joint", 
                            "right_hip_z": "right_hip_yaw_joint", 
@@ -266,6 +288,11 @@ class MotionLoader:
         indexes = []
         missing_dofs = []
         selected_robots_dof_indexes = []
+        # print(f"DPF names length: {len(dof_names)}")
+        # print(f"DOF names: {dof_names}")
+        # print(f"Motion DOF names length: {len(self._dof_names)}")
+        # print(f"Motion DOF names: {self._dof_names}")
+        
         for i, name in enumerate(dof_names):
             if name in self.g1_mapping_inv:
                 name = self.g1_mapping_inv[name]
