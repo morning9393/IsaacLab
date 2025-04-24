@@ -38,8 +38,20 @@ class HumanoidAmpEnv(DirectRLEnv):
 
         # DOF and key body indexes
         motion_key_body_names = ["right_hand", "left_hand", "right_foot", "left_foot"]
-        key_body_names = ["right_palm_link", "left_palm_link", "right_ankle_roll_link", "left_ankle_roll_link"]
+        # key_body_names = ["right_palm_link", "left_palm_link", "right_ankle_roll_link", "left_ankle_roll_link"]
+        key_body_names = ["right_wrist_roll_link", "left_wrist_roll_link", "right_ankle_roll_link", "left_ankle_roll_link"]
         # import pdb; pdb.set_trace()
+        
+        # print("===============================================================")
+        # print("self.robot.data.body_names: ", self.robot.data.body_names)
+        # print("self._body_names: ", self._motion_loader._body_names)
+        
+        # print("===============================================================")
+        # print("self.robot.data.joint_names: ", self.robot.data.joint_names)
+        # print("self._dof_names: ", self._motion_loader._dof_names)
+
+        # print("===============================================================")
+        # exit()
         
         self.ref_body_index = self.robot.data.body_names.index(self.cfg.reference_body)
         self.key_body_indexes = [self.robot.data.body_names.index(name) for name in key_body_names]
