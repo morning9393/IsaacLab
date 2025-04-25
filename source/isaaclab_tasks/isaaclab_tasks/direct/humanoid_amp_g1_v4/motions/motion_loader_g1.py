@@ -42,7 +42,7 @@ class MotionLoaderG1:
         # import ipdb; ipdb.set_trace()
         self.device = device
         # self._dof_names = data["dof_names"].tolist()
-        self._dof_names_file = open('/home/pjlab/文档/shunlin/HumanoidCatching-54ac7da59e75716cc22ab644171766438495b159/legged_gym/resources/dataset/g1_data/crawl_train/joint_id.txt', "r")
+        self._dof_names_file = open('/home/morning/Robust_Loco/IsaacLab/source/isaaclab_tasks/isaaclab_tasks/direct/humanoid_amp_g1_v4/motions/crawl_train/joint_id.txt', "r")
         self._dof_names = self._dof_names_file.readlines()
         self._dof_names = [name.strip().lstrip('0123456789 ') for name in self._dof_names] # 21
 

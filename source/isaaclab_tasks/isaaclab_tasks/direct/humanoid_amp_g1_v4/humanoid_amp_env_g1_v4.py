@@ -38,6 +38,8 @@ class HumanoidAmpEnv(DirectRLEnv):
         # self.robot.data.joint_names: ['left_hip_pitch_joint', 'right_hip_pitch_joint', 'waist_yaw_joint', 'left_hip_roll_joint', 'right_hip_roll_joint', 'left_shoulder_pitch_joint', 'right_shoulder_pitch_joint', 'left_hip_yaw_joint', 'right_hip_yaw_joint', 'left_shoulder_roll_joint', 'right_shoulder_roll_joint', 'left_knee_joint', 'right_knee_joint', 'left_shoulder_yaw_joint', 'right_shoulder_yaw_joint', 'left_ankle_pitch_joint', 'right_ankle_pitch_joint', 'left_elbow_joint', 'right_elbow_joint', 'left_ankle_roll_joint', 'right_ankle_roll_joint', 'left_wrist_roll_joint', 'right_wrist_roll_joint']
         motion_key_body_names = ["right_wrist_link", "left_wrist_link", "right_ankle_link", "left_ankle_link"]
         key_body_names = ["right_wrist_roll_link", "left_wrist_roll_link", "right_ankle_roll_link", "left_ankle_roll_link"]
+        
+        
         # import pdb; pdb.set_trace()
         self.ref_body_index = self.robot.data.body_names.index(self.cfg.reference_body)
         self.key_body_indexes = [self.robot.data.body_names.index(name) for name in key_body_names]
@@ -79,22 +81,13 @@ class HumanoidAmpEnv(DirectRLEnv):
     def _pre_physics_step(self, actions: torch.Tensor):
         self.actions = actions.clone()
 
-    # def _apply_action(self):
-    #     # import ipdb; ipdb.set_trace()
-    #     # target = self.action_offset + self.action_scale * self.actions
-    #     target = self.action_offset[self.motion_dof_select_robot_indexes] + self.action_scale[self.motion_dof_select_robot_indexes] * self.actions
-    #     # self.robot.set_joint_position_target(target)
-    #     # import ipdb; ipdb.set_trace()
-    #     self.robot.set_joint_position_target(target, joint_ids=self.motion_dof_select_robot_indexes)
-    #     # import ipdb; ipdb.set_trace()
-
 
     def _apply_action(self):
             # import ipdb; ipdb.set_trace()
             # target = self.action_offset + self.action_scale * self.actions
 
-            # target = self.action_offset[self.motion_dof_select_robot_indexes] + self.action_scale[self.motion_dof_select_robot_indexes] * self.actions
-            target = self.actions
+            target = self.action_offset[self.motion_dof_select_robot_indexes] + self.action_scale[self.motion_dof_select_robot_indexes] * self.actions
+            # target = self.actions
             # self.robot.set_joint_position_target(target)
             # import ipdb; ipdb.set_trace()
             self.robot.set_joint_position_target(target, joint_ids=self.motion_dof_select_robot_indexes)
